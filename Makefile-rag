@@ -1,0 +1,42 @@
+.PHONY := ps 
+DOCKER := ssh genai-server /usr/local/bin/docker 
+HOME_DIR := $(shell ssh genai-server pwd)/Desktop
+DOMAIN := http://omars-mac-mini.attlocal.net
+
+ps:
+	$(DOCKER) ps
+
+status: ps
+
+stop:
+	$(DOCKER) ps --filter "ancestor=qdrant/qdrant" -q | xargs -n 1  $(DOCKER) stop 
+	
+pull:
+	$(DOCKER) pull qdrant/qdrant
+
+is_running:
+	$(DOCKER) ps --filter "ancestor=qdrant/qdrant" -q | egrep -E '[a-zA-Z0-9_-]+'
+
+ps_help:
+	$(DOCKER) ps --help
+
+stop_help:
+	$(DOCKER) stop --help
+
+run: 
+	make is_running || $(DOCKER) run -d -p 6333:6333 -p 6334:6334 \
+		-v "$(HOME_DIR)/qdrant_storage:/qdrant/storage:z" \
+		qdrant/qdrant
+
+echo:
+	echo $(HOME_DIR)
+
+clean:
+	$(DOCKER) system prune --all --volumes
+
+test: 
+	$(DOCKER) run -i alpine sh
+
+open:
+	open -a 'Google Chrome' $(DOMAIN):6333/dashboard#/welcome
+

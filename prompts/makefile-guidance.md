@@ -1,0 +1,1 @@
+Import the MCP Makefile from the main makefile as needed. Ensure the main makefile has a tst target that works while reusing targets in other makeifles

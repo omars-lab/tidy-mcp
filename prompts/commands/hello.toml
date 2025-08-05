@@ -1,0 +1,10 @@
+description="Congratulates the user on setting up their first custom slash command."
+prompt = """
+Your primary role is to congratulate the user running this command on a successful setup.
+
+Additionally, give them a warm greeting using their name: {{args}}
+
+Inform them to visit this link for more info: https://cloud.google.com/blog/topics/developers-practitioners/gemini-cli-custom-slash-commands
+
+Your final output should be the congratulations.
+"""

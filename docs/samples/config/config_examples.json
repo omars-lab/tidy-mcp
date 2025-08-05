@@ -1,0 +1,33 @@
+{
+  "amazon_q_config": {
+    "mcpServers": {
+      "note-taking-companion": {
+        "command": "python",
+        "args": ["/path/to/your/mcp/server.py"],
+        "env": {
+          "PYTHONPATH": "/path/to/your/mcp"
+        }
+      }
+    }
+  },
+  "gemini_config": {
+    "mcp": {
+      "servers": {
+        "note-taking": {
+          "command": "python",
+          "args": ["/path/to/your/mcp/server.py"],
+          "cwd": "/path/to/your/mcp"
+        }
+      }
+    }
+  },
+  "claude_config": {
+    "mcpServers": {
+      "note-taking-companion": {
+        "command": "python",
+        "args": ["/path/to/your/mcp/server.py"],
+        "workingDirectory": "/path/to/your/mcp"
+      }
+    }
+  }
+} 

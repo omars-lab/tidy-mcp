@@ -1,0 +1,70 @@
+# Makefile for MCP Server Setup
+ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+
+# Default target
+.PHONY: help
+help:
+	@echo "Available targets:"
+	@echo "  setup-env    - Create conda environment 'mcp' and install dependencies"
+	@echo "  install      - Install requirements in the mcp environment"
+	@echo "  test         - Run the test suite"
+	@echo "  run          - Run the MCP server"
+	@echo "  clean        - Remove conda environment"
+	@echo "  help         - Show this help message"
+
+# Create conda environment and install dependencies
+.PHONY: setup-env
+setup-env:
+	@echo "Creating conda environment 'mcp'..."
+	conda create -n mcp python=3.12 pip -y
+	@echo "Installing dependencies..."
+	conda run -n mcp pip install -r requirements.txt
+	@echo "✅ MCP environment setup complete!"
+	@echo "To activate the environment: conda activate mcp"
+
+# Install requirements in existing environment
+.PHONY: install
+install:
+	@echo "Installing requirements in mcp environment..."
+	conda run -n mcp pip install -r requirements.txt
+	@echo "✅ Dependencies installed!"
+
+# Run tests
+.PHONY: test
+test:
+	@echo "Running MCP server tests..."
+	conda run -n mcp python tst/notes_mcp/test_server.py
+
+# Run the MCP server
+.PHONY: run
+run:
+	@echo "Starting MCP server..."
+	conda run -n mcp python src/notes_mcp/server.py
+
+# Clean up conda environment
+.PHONY: clean
+clean:
+	@echo "Removing conda environment 'mcp'..."
+	conda env remove -n mcp -y
+	@echo "✅ Environment removed!"
+
+# Show environment info
+.PHONY: info
+info:
+	@echo "Conda environment information:"
+	conda info --envs | grep mcp || echo "Environment 'mcp' not found"
+	@echo ""
+	@echo "To activate: conda activate mcp"
+	@echo "To deactivate: conda deactivate" 
+
+configure-gemini-slash-commands:
+	@echo "Configuring Gemini slash commands..."
+	# gemini config set --slash-commands-dir .gemini/commands
+	mkdir -p ${ROOT_DIR}/.gemini/
+	ln -s ${ROOT_DIR}/prompts/commands ${ROOT_DIR}/.gemini/commands
+	@echo "✅ Gemini slash commands configured!"
+
+
+simulate-mcp-note-taking:
+	jq '"cd \(.mcpServers.note_taking.cwd); \(.mcpServers.note_taking.command) \(.mcpServers.note_taking.args | join($$ARGS.positional[0]))"' \
+	 	-r  .gemini/settings.json  --args " " | sh
