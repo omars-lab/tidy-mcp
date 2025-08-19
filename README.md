@@ -1,120 +1,228 @@
-# tidy-mcp
+# Notes MCP Server
 
-A personal Model Context Protocol (MCP) server built with Python `fastmcp` to help keep me clean and organized. This server provides resources, tools, and prompts for personal note-taking and organization workflows.
+A Model Context Protocol (MCP) server for note-taking workflows and personal knowledge management.
 
 ## Features
 
-- **Resources**: Note templates for different personal use cases
-- **Tools**: Note analysis and content processing
-- **Prompts**: Note generation with different styles and lengths
+- **Note Templates**: Pre-built templates for meetings, daily reflections, and more
+- **Note Analysis**: Analyze note content for action items, key points, and summaries
+- **Note Generation**: Generate notes based on topics and writing styles
+- **MCP Integration**: Full Model Context Protocol compliance
 
 ## Installation
 
-### Option 1: Using Makefile (Recommended)
+### Development Installation (Recommended)
 
-1. Create conda environment and install dependencies:
+For development, install in editable mode using the Makefile:
+
 ```bash
+# Setup complete development environment
 make setup-env
+
+# Or install with development dependencies
+make install-dev
 ```
 
-2. Run the server:
+### Manual Installation
+
 ```bash
+# Using pip
+pip install -e .
+
+# Production installation
+pip install notes-mcp
+```
+
+## Usage
+
+### Quick Start
+
+```bash
+# Setup environment and run server
+make setup-env
 make run
+
+# Or run as a module
+make run-module
+
+# Or run directly
+python -m notes_mcp
 ```
 
-3. Run tests:
+### As a Python Package
+
+```python
+from notes_mcp import mcp, NoteTemplate
+
+# Access the MCP server
+server = mcp
+
+# Use note templates
+templates = await get_note_templates()
+```
+
+### As a Command Line Tool
+
+After installation, you can run the MCP server directly:
+
 ```bash
+notes-mcp
+```
+
+### As a Python Module
+
+You can also run the MCP server as a Python module:
+
+```bash
+python -m notes_mcp
+```
+
+### Using the Makefile
+
+The project includes a comprehensive Makefile with many useful commands:
+
+#### 🔧 Setup & Installation
+```bash
+make setup-env      # Create conda environment and install package
+make install        # Install package in existing environment
+make install-dev    # Install with development dependencies
+make uninstall      # Uninstall the package
+```
+
+#### 🚀 Development
+```bash
+make run            # Run the MCP server
+make run-cli        # Run using the CLI tool
+make run-module     # Run as a Python module
+make dev            # Run in development mode
+```
+
+#### 🧪 Testing & Quality
+```bash
+make test           # Run the test suite
+make test-verbose   # Run tests with verbose output
+make lint           # Run code linting
+make format         # Format code with black
+make check          # Run all quality checks
+```
+
+#### 📦 Building & Distribution
+```bash
+make build          # Build the package
+make dist           # Create distribution packages
+make clean-build    # Clean build artifacts
+```
+
+#### 🧹 Maintenance
+```bash
+make clean          # Remove environment and clean build artifacts
+make clean-env      # Remove only the conda environment
+make info           # Show environment and package information
+make deps           # Show installed dependencies
+```
+
+#### 🔗 Integration
+```bash
+make configure-gemini  # Configure Gemini slash commands
+make simulate-mcp      # Simulate MCP note-taking workflow
+```
+
+#### 📚 Documentation
+```bash
+make docs            # Generate documentation
+make readme          # Update README with package info
+```
+
+#### 🆘 Help
+```bash
+make help            # Show all available commands
+```
+
+## Development
+
+### Project Structure
+
+```
+src/
+├── notes_mcp/
+│   ├── __init__.py      # Package metadata
+│   └── server.py        # MCP server implementation
+tst/
+└── notes_mcp/
+    └── test_server.py   # Test suite
+```
+
+### Development Workflow
+
+The Makefile provides a complete development workflow:
+
+```bash
+# Setup development environment
+make setup-env
+
+# Run quality checks
+make check
+
+# Start development server
+make dev
+
+# Run tests
 make test
 ```
 
-### Option 2: Manual Installation
+### Code Quality
 
-1. Install the required dependencies:
+This project uses several tools for code quality:
+
+- **Black**: Code formatting
+- **Flake8**: Linting
+- **Pytest**: Testing
+
+Run all quality checks:
+
 ```bash
-pip install -r requirements.txt
+make check
 ```
 
-2. Run the server:
+Or run individual checks:
+
 ```bash
-python src/notes_mcp/server.py
+make format    # Format code
+make lint      # Run linting
+make test      # Run tests
 ```
 
-## Server Components
+### Building and Distribution
 
-### Resources
-- `note_templates`: Provides pre-defined note templates for meetings, daily reflections, etc.
-
-### Tools
-- `analyze_note`: Analyzes note content and extracts insights like word count, action items, and key points
-
-### Prompts
-- `generate_note`: Generates notes based on topic, style, and length preferences
-
-## CLI Integration
-
-For detailed instructions on integrating this MCP server with various AI CLI tools (Amazon Q CLI, Gemini CLI, Claude Code CLI), see the [CLI Integration Guide](docs/cli-integration.md).
-
-## Makefile Commands
-
-The Makefile provides convenient commands for managing the MCP server:
-
-- `make setup-env` - Create conda environment 'mcp' and install dependencies
-- `make install` - Install requirements in existing mcp environment
-- `make test` - Run the test suite
-- `make run` - Run the MCP server
-- `make clean` - Remove conda environment
-- `make info` - Show environment information
-- `make help` - Show all available commands
-
-## Configuration Options
-
-- **Templates**: Add new note templates in the `get_note_templates()` function
-- **Analysis Logic**: Enhance the `analyze_note()` function with more sophisticated analysis
-- **Generation Styles**: Add new note generation styles in the `generate_note()` function
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Import Errors**: Ensure all dependencies are installed:
 ```bash
-# Using conda environment
-make install
+# Build the package
+make build
 
-# Or manually
-conda run -n mcp pip install -r requirements.txt
+# Create distribution packages
+make dist
+
+# Clean build artifacts
+make clean-build
 ```
-
-2. **Conda Environment Issues**: If the environment doesn't exist:
-```bash
-make setup-env
-```
-
-3. **Permission Issues**: Make sure the server file is executable:
-```bash
-chmod +x src/notes_mcp/server.py
-```
-
-4. **Port Conflicts**: The server runs on the default MCP port. Ensure no other MCP servers are using the same port.
-
-### Debug Mode
-
-Run the server in debug mode for more verbose output:
-```bash
-python -u src/notes_mcp/server.py --debug
-```
-
-For CLI integration troubleshooting, see the [CLI Integration Guide](docs/cli-integration.md).
-
-## Contributing
-
-To extend the server functionality:
-
-1. Add new resources by creating functions decorated with `@app.resource()`
-2. Add new tools by creating functions decorated with `@app.tool()`
-3. Add new prompts by creating functions decorated with `@app.prompt()`
-4. Update the README with new features
 
 ## License
 
-This project is licensed under the MIT License. 
+MIT License - see LICENSE file for details.
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests
+5. Submit a pull request
+
+## MCP Protocol
+
+This server implements the Model Context Protocol (MCP) and provides:
+
+- **Resources**: Note templates and metadata
+- **Tools**: Note analysis and processing
+- **Prompts**: Note generation and formatting
+
+For more information about MCP, visit: https://modelcontextprotocol.io/ 

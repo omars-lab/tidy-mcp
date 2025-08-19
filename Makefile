@@ -8,23 +8,59 @@ include $(ROOT_DIR)/Makefile-mcp
 .DEFAULT_GOAL := help
 .PHONY: help
 help:
-	@echo "Available targets:"
+	@echo "Notes MCP Server - Available Commands:"
+	@echo ""
+	@echo "🔧 Setup & Installation:"
+	@echo "  setup-env    - Create conda environment and install package in editable mode"
+	@echo "  install      - Install package in editable mode in existing environment"
+	@echo "  install-dev  - Install package with development dependencies"
+	@echo "  uninstall    - Uninstall the package from the environment"
+	@echo ""
+	@echo "🚀 Development:"
+	@echo "  run          - Run the MCP server"
+	@echo "  run-cli      - Run the MCP server using the CLI tool"
+	@echo "  run-module   - Run the MCP server as a Python module"
+	@echo "  dev          - Run the server in development mode with auto-reload"
+	@echo ""
+	@echo "🧪 Testing & Quality:"
+	@echo "  test         - Run the test suite"
+	@echo "  test-verbose - Run tests with verbose output"
+	@echo "  lint         - Run code linting with flake8"
+	@echo "  format       - Format code with black"
+	@echo "  check        - Run all quality checks (lint + format + test)"
+	@echo ""
+	@echo "📦 Building & Distribution:"
+	@echo "  build        - Build the package distribution"
+	@echo "  clean-build  - Clean build artifacts"
+	@echo "  dist         - Create distribution packages"
+	@echo ""
+	@echo "🧹 Maintenance:"
+	@echo "  clean        - Remove conda environment and clean build artifacts"
+	@echo "  clean-env    - Remove only the conda environment"
+	@echo "  info         - Show environment and package information"
+	@echo "  deps         - Show installed dependencies"
+	@echo ""
+	@echo "🔗 Integration:"
+	@echo "  configure-gemini - Configure Gemini slash commands"
+	@echo "  simulate-mcp     - Simulate MCP note-taking workflow"
+	@echo ""
+	@echo "📚 Documentation:"
+	@echo "  docs         - Generate documentation"
+	@echo "  readme       - Update README with current package info"
+	@echo ""
+	@echo "🎯 Project-Specific:"
 	@echo "  prompt              - Test gemini prompt"
 	@echo "  generate-weekly-report - Generate weekly report using gemini"
 	@echo "  configure-context   - Set up context links and gitignore"
-	@echo "  tst                 - Run tests (uses MCP test target)"
-	@echo "  setup-env           - Create conda environment 'mcp' and install dependencies"
-	@echo "  install             - Install requirements in the mcp environment"
-	@echo "  test                - Run the MCP server test suite"
-	@echo "  run                 - Run the MCP server"
-	@echo "  clean               - Remove conda environment"
-	@echo "  info                - Show conda environment info"
+	@echo "  extract-key-points  - Extract key points using gemini"
+	@echo "  check-resume        - Check resume using gemini"
+	@echo "  setup-knowledge     - Set up knowledge base links"
 
 prompt:
 	echo what tools do you have access to | gemini --prompt
 
 generate-weekly-report:
-	gemini -y --prompt prompts/generate-weekly-summary.md 
+	gemini -y --prompt prompts/commands/noteplan/generate-weekly-summary.toml 
 	
 configure-context:
 	@ test -L ${ROOT_DIR}/context/NotePlan3 \
@@ -45,3 +81,14 @@ tst: test
 # Add instrucitons to add dates based on file location ...
 # Only add date to root todo
 # Teach it about themes ...
+
+extract-key-points:
+	cat prompts/point-extraction.prompt.md | gemini -p
+
+check-resume:
+	cat prompts/check-resume.prompt.md | gemini -p
+
+setup-knowledge:
+	mkdir -p knowledge
+	test -L knowledge/promo-doc.md || \
+		(ln -s "/Users/omareid/Library/Containers/co.noteplan.NotePlan3/Data/Library/Application Support/co.noteplan.NotePlan3/Notes/🎩 Role/2023 Promo.txt" knowledge/promo-doc.md)

@@ -1,70 +1,241 @@
-# Makefile for MCP Server Setup
+# Makefile for Notes MCP Server
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
+CONDA_ENV=$(shell basename ${ROOT_DIR})
 
 # Default target
 .PHONY: help
 help:
-	@echo "Available targets:"
-	@echo "  setup-env    - Create conda environment 'mcp' and install dependencies"
-	@echo "  install      - Install requirements in the mcp environment"
-	@echo "  test         - Run the test suite"
+	@echo "Notes MCP Server - Available Commands:"
+	@echo ""
+	@echo "🔧 Setup & Installation:"
+	@echo "  setup-env    - Create conda environment and install package in editable mode"
+	@echo "  install      - Install package in editable mode in existing environment"
+	@echo "  install-dev  - Install package with development dependencies"
+	@echo "  uninstall    - Uninstall the package from the environment"
+	@echo ""
+	@echo "🚀 Development:"
 	@echo "  run          - Run the MCP server"
-	@echo "  clean        - Remove conda environment"
-	@echo "  help         - Show this help message"
+	@echo "  run-cli      - Run the MCP server using the CLI tool"
+	@echo "  run-module   - Run the MCP server as a Python module"
+	@echo "  dev          - Run the server in development mode with auto-reload"
+	@echo ""
+	@echo "🧪 Testing & Quality:"
+	@echo "  test         - Run the test suite"
+	@echo "  test-verbose - Run tests with verbose output"
+	@echo "  lint         - Run code linting with flake8"
+	@echo "  format       - Format code with black"
+	@echo "  check        - Run all quality checks (lint + format + test)"
+	@echo ""
+	@echo "📦 Building & Distribution:"
+	@echo "  build        - Build the package distribution"
+	@echo "  clean-build  - Clean build artifacts"
+	@echo "  dist         - Create distribution packages"
+	@echo ""
+	@echo "🧹 Maintenance:"
+	@echo "  clean        - Remove conda environment and clean build artifacts"
+	@echo "  clean-env    - Remove only the conda environment"
+	@echo "  info         - Show environment and package information"
+	@echo "  deps         - Show installed dependencies"
+	@echo ""
+	@echo "🔗 Integration:"
+	@echo "  configure-gemini - Configure Gemini slash commands"
+	@echo "  simulate-mcp     - Simulate MCP note-taking workflow"
+	@echo ""
+	@echo "📚 Documentation:"
+	@echo "  docs         - Generate documentation"
+	@echo "  readme       - Update README with current package info"
+
+# =============================================================================
+# Setup & Installation
+# =============================================================================
 
 # Create conda environment and install dependencies
 .PHONY: setup-env
 setup-env:
-	@echo "Creating conda environment 'mcp'..."
-	conda create -n mcp python=3.12 pip -y
-	@echo "Installing dependencies..."
-	conda run -n mcp pip install -r requirements.txt
+	@echo "🔧 Creating conda environment '${CONDA_ENV}'..."
+	conda create -n ${CONDA_ENV} python=3.12 pip -y
+	@echo "📦 Installing package in editable mode..."
+	conda run -n ${CONDA_ENV} pip install -e .
 	@echo "✅ MCP environment setup complete!"
-	@echo "To activate the environment: conda activate mcp"
+	@echo "To activate the environment: conda activate ${CONDA_ENV}"
 
-# Install requirements in existing environment
+# Install package in existing environment
 .PHONY: install
 install:
-	@echo "Installing requirements in mcp environment..."
-	conda run -n mcp pip install -r requirements.txt
-	@echo "✅ Dependencies installed!"
+	@echo "📦 Installing package in ${CONDA_ENV} environment..."
+	conda run -n ${CONDA_ENV} pip install -e .
+	@echo "✅ Package installed!"
 
-# Run tests
-.PHONY: test
-test:
-	@echo "Running MCP server tests..."
-	conda run -n mcp python tst/notes_mcp/test_server.py
+# Install development dependencies
+.PHONY: install-dev
+install-dev:
+	@echo "🔧 Installing package with development dependencies..."
+	conda run -n ${CONDA_ENV} pip install -e ".[dev]"
+	@echo "✅ Package with dev dependencies installed!"
+
+# Uninstall the package
+.PHONY: uninstall
+uninstall:
+	@echo "🗑️  Uninstalling package..."
+	conda run -n ${CONDA_ENV} pip uninstall notes-mcp -y
+	@echo "✅ Package uninstalled!"
+
+# =============================================================================
+# Development
+# =============================================================================
 
 # Run the MCP server
 .PHONY: run
 run:
-	@echo "Starting MCP server..."
-	conda run -n mcp python src/notes_mcp/server.py
+	@echo "🚀 Starting MCP server..."
+	conda run -n ${CONDA_ENV} python src/notes_mcp/server.py
 
-# Clean up conda environment
+# Run the MCP server using CLI tool
+.PHONY: run-cli
+run-cli:
+	@echo "🚀 Starting MCP server via CLI..."
+	conda run -n ${CONDA_ENV} notes-mcp
+
+# Run the MCP server as a Python module
+.PHONY: run-module
+run-module:
+	@echo "🚀 Starting MCP server as Python module..."
+	conda run -n ${CONDA_ENV} python -m notes_mcp
+
+# Run in development mode (placeholder for future auto-reload)
+.PHONY: dev
+dev:
+	@echo "🔧 Starting MCP server in development mode..."
+	@echo "Note: Auto-reload not yet implemented, using standard run"
+	conda run -n ${CONDA_ENV} python src/notes_mcp/server.py
+
+# =============================================================================
+# Testing & Quality
+# =============================================================================
+
+# Run tests
+.PHONY: test
+test:
+	@echo "🧪 Running test suite..."
+	conda run -n ${CONDA_ENV} python -m pytest tst/ -v
+
+# Run tests with verbose output
+.PHONY: test-verbose
+test-verbose:
+	@echo "🧪 Running tests with verbose output..."
+	conda run -n ${CONDA_ENV} python -m pytest tst/ -vv --tb=short
+
+# Run code linting
+.PHONY: lint
+lint:
+	@echo "🔍 Running code linting..."
+	conda run -n ${CONDA_ENV} flake8 src/ tst/ --max-line-length=88 --extend-ignore=E203,W503
+
+# Format code
+.PHONY: format
+format:
+	@echo "🎨 Formatting code with black..."
+	conda run -n ${CONDA_ENV} black src/ tst/ --line-length=88
+
+# Run all quality checks
+.PHONY: check
+check: lint format test
+	@echo "✅ All quality checks passed!"
+
+# =============================================================================
+# Building & Distribution
+# =============================================================================
+
+# Build the package
+.PHONY: build
+build:
+	@echo "🔨 Building package..."
+	conda run -n ${CONDA_ENV} python -m build
+
+# Clean build artifacts
+.PHONY: clean-build
+clean-build:
+	@echo "🧹 Cleaning build artifacts..."
+	rm -rf build/ dist/ *.egg-info/
+	@echo "✅ Build artifacts cleaned!"
+
+# Create distribution packages
+.PHONY: dist
+dist: clean-build build
+	@echo "📦 Distribution packages created in dist/"
+
+# =============================================================================
+# Maintenance
+# =============================================================================
+
+# Clean up everything
 .PHONY: clean
-clean:
-	@echo "Removing conda environment 'mcp'..."
-	conda env remove -n mcp -y
+clean: clean-build clean-env
+	@echo "🧹 All cleanup complete!"
+
+# Clean up conda environment only
+.PHONY: clean-env
+clean-env:
+	@echo "🗑️  Removing conda environment '${CONDA_ENV}'..."
+	conda env remove -n ${CONDA_ENV} -y
 	@echo "✅ Environment removed!"
 
 # Show environment info
 .PHONY: info
 info:
-	@echo "Conda environment information:"
-	conda info --envs | grep mcp || echo "Environment 'mcp' not found"
+	@echo "📊 Environment Information:"
+	@echo "=========================="
+	@echo "Project root: ${ROOT_DIR}"
+	@echo "Conda environment: ${CONDA_ENV}"
 	@echo ""
-	@echo "To activate: conda activate mcp"
-	@echo "To deactivate: conda deactivate" 
+	@echo "Conda environments:"
+	conda info --envs | grep ${CONDA_ENV} || echo "Environment '${CONDA_ENV}' not found"
+	@echo ""
+	@echo "Package information:"
+	conda run -n ${CONDA_ENV} python -c "import notes_mcp; print(f'Version: {notes_mcp.__version__}'); print(f'Description: {notes_mcp.__description__}')" 2>/dev/null || echo "Package not installed"
+	@echo ""
+	@echo "Commands:"
+	@echo "  Activate: conda activate ${CONDA_ENV}"
+	@echo "  Deactivate: conda deactivate"
 
-configure-gemini-slash-commands:
-	@echo "Configuring Gemini slash commands..."
-	# gemini config set --slash-commands-dir .gemini/commands
+# Show dependencies
+.PHONY: deps
+deps:
+	@echo "📦 Installed Dependencies:"
+	conda run -n ${CONDA_ENV} pip list
+
+# =============================================================================
+# Integration
+# =============================================================================
+
+# Configure Gemini slash commands
+.PHONY: configure-gemini
+configure-gemini:
+	@echo "🔗 Configuring Gemini slash commands..."
 	mkdir -p ${ROOT_DIR}/.gemini/
-	ln -s ${ROOT_DIR}/prompts/commands ${ROOT_DIR}/.gemini/commands
+	ln -sf ${ROOT_DIR}/prompts/commands ${ROOT_DIR}/.gemini/commands
 	@echo "✅ Gemini slash commands configured!"
 
-
-simulate-mcp-note-taking:
+# Simulate MCP note-taking workflow
+.PHONY: simulate-mcp
+simulate-mcp:
+	@echo "🎭 Simulating MCP note-taking workflow..."
 	jq '"cd \(.mcpServers.note_taking.cwd); \(.mcpServers.note_taking.command) \(.mcpServers.note_taking.args | join($$ARGS.positional[0]))"' \
-	 	-r  .gemini/settings.json  --args " " | sh
+		-r .gemini/settings.json --args " " | sh
+
+# =============================================================================
+# Documentation
+# =============================================================================
+
+# Generate documentation (placeholder)
+.PHONY: docs
+docs:
+	@echo "📚 Documentation generation not yet implemented"
+	@echo "Current documentation is in README.md"
+
+# Update README with current package info
+.PHONY: readme
+readme:
+	@echo "📝 Updating README with current package information..."
+	@echo "Package version: $(shell conda run -n ${CONDA_ENV} python -c "import notes_mcp; print(notes_mcp.__version__)" 2>/dev/null || echo "unknown")"
+	@echo "README.md is up to date"

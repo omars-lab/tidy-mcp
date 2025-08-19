@@ -1,0 +1,12 @@
+include README.md
+include LICENSE
+include requirements.txt
+include pyproject.toml
+include Makefile-mcp
+
+recursive-include src *.py
+recursive-include tst *.py
+include src/notes_mcp/__main__.py
+
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]

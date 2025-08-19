@@ -1,3 +1,5 @@
+description="Analyzes todo files over a week and generates a weekly summary."
+prompt = """
 
 In the context/NotePlan3/Calendar folder there are files that capture my daily todos.
 
@@ -20,3 +22,7 @@ Additionally, there are some constraits that you must abide by:
 2) Keep the wording of the tasks as-is. Other than adding the hashtag for the date at the end of a task, do not modify the wording of any of the tasks.
 3) Do not create any new tasks.
 4) Do not delete any tasks. All tasks in the underlying files should be present in the final report.
+
+Additionally, save the output markdown report in the docs/samples/output folder. Ensure the starting day is in the name of the file.
+
+"""
