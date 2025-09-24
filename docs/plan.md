@@ -11,3 +11,5 @@
 	* https://github.com/google-gemini/gemini-cli/blob/main/docs/index.md
 	* https://github.com/google-gemini/gemini-cli/blob/main/docs/cli/configuration.md
 	* [ ] Simulate how gemini would run my MCP server ...
+
+	

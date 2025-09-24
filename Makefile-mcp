@@ -1,11 +1,11 @@
-# Makefile for Notes MCP Server
+# Makefile for Tidy MCP Server
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 CONDA_ENV=$(shell basename ${ROOT_DIR})
 
 # Default target
 .PHONY: help
 help:
-	@echo "Notes MCP Server - Available Commands:"
+	@echo "Tidy MCP Server - Available Commands:"
 	@echo ""
 	@echo "🔧 Setup & Installation:"
 	@echo "  setup-env    - Create conda environment and install package in editable mode"
@@ -77,7 +77,7 @@ install-dev:
 .PHONY: uninstall
 uninstall:
 	@echo "🗑️  Uninstalling package..."
-	conda run -n ${CONDA_ENV} pip uninstall notes-mcp -y
+	conda run -n ${CONDA_ENV} pip uninstall Tidy-mcp -y
 	@echo "✅ Package uninstalled!"
 
 # =============================================================================
@@ -88,26 +88,26 @@ uninstall:
 .PHONY: run
 run:
 	@echo "🚀 Starting MCP server..."
-	conda run -n ${CONDA_ENV} python src/notes_mcp/server.py
+	conda run -n ${CONDA_ENV} python src/tidy_mcp/server.py
 
 # Run the MCP server using CLI tool
 .PHONY: run-cli
 run-cli:
 	@echo "🚀 Starting MCP server via CLI..."
-	conda run -n ${CONDA_ENV} notes-mcp
+	conda run -n ${CONDA_ENV} tidy-mcp
 
 # Run the MCP server as a Python module
 .PHONY: run-module
 run-module:
 	@echo "🚀 Starting MCP server as Python module..."
-	conda run -n ${CONDA_ENV} python -m notes_mcp
+	conda run -n ${CONDA_ENV} python -m tidy_mcp
 
 # Run in development mode (placeholder for future auto-reload)
 .PHONY: dev
 dev:
 	@echo "🔧 Starting MCP server in development mode..."
 	@echo "Note: Auto-reload not yet implemented, using standard run"
-	conda run -n ${CONDA_ENV} python src/notes_mcp/server.py
+	conda run -n ${CONDA_ENV} python src/tidy_mcp/server.py
 
 # =============================================================================
 # Testing & Quality
@@ -192,7 +192,7 @@ info:
 	conda info --envs | grep ${CONDA_ENV} || echo "Environment '${CONDA_ENV}' not found"
 	@echo ""
 	@echo "Package information:"
-	conda run -n ${CONDA_ENV} python -c "import notes_mcp; print(f'Version: {notes_mcp.__version__}'); print(f'Description: {notes_mcp.__description__}')" 2>/dev/null || echo "Package not installed"
+	conda run -n ${CONDA_ENV} python -c "import tidy_mcp; print(f'Version: {tidy_mcp.__version__}'); print(f'Description: {tidy_mcp.__description__}')" 2>/dev/null || echo "Package not installed"
 	@echo ""
 	@echo "Commands:"
 	@echo "  Activate: conda activate ${CONDA_ENV}"
@@ -237,5 +237,5 @@ docs:
 .PHONY: readme
 readme:
 	@echo "📝 Updating README with current package information..."
-	@echo "Package version: $(shell conda run -n ${CONDA_ENV} python -c "import notes_mcp; print(notes_mcp.__version__)" 2>/dev/null || echo "unknown")"
+	@echo "Package version: $(shell conda run -n ${CONDA_ENV} python -c "import tidy_mcp; print(tidy_mcp.__version__)" 2>/dev/null || echo "unknown")"
 	@echo "README.md is up to date"

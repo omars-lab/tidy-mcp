@@ -3,13 +3,13 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "notes-mcp"
+name = "tidy-mcp"
 version = "0.1.0"
-description = "MCP Server for Note Taking Companion"
+description = "MCP Server for keeping things tidy!"
 readme = "README.md"
 license = {text = "MIT"}
 authors = [
-    {name = "Omar Eid", email = "omar_eid21@yahoo.com"}
+    {name = "Omar Eid", email = "omar@bytesofpurpose.com"}
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -23,6 +23,8 @@ requires-python = ">=3.12"
 dependencies = [
     "fastmcp>=0.1.0",
     "pydantic>=2.0.0",
+    "arrow",
+    "Jinja2<4.0.0,>=2.7"
 ]
 
 [project.optional-dependencies]
@@ -34,7 +36,7 @@ dev = [
 ]
 
 [project.scripts]
-notes-mcp = "notes_mcp.server:main"
+tidy-mcp = "tidy_mcp.server:main"
 
 [project.urls]
 Homepage = "https://github.com/omareid/tidy-mcp"

@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Entry point for running the notes_mcp package as a module.
+Entry point for running the tidy_mcp package as a module.
 
 Usage:
-    python -m notes_mcp
-    python -m notes_mcp --help
+    python -m tidy_mcp
+    python -m tidy_mcp --help
 """
 
 import sys

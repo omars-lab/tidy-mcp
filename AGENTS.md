@@ -1,9 +1,9 @@
-# Notes MCP Server - Repository Guidelines
+# Tidy MCP Server - Repository Guidelines
 
 ## Project Structure & Module Organization
 
-- **Source Code**: Located in `src/notes_mcp/` directory. Organized as a Python package.
-- **Tests**: Found in `tst/notes_mcp/` directory. Mirrors the src structure.
+- **Source Code**: Located in `src/tidy_mcp/` directory. Organized as a Python package.
+- **Tests**: Found in `tst/tidy_mcp/` directory. Mirrors the src structure.
 - **Configuration**: `pyproject.toml` for package configuration and dependencies.
 - **Documentation**: `README.md` for comprehensive project documentation.
 
@@ -11,12 +11,12 @@
 
 ```
 src/
-├── notes_mcp/
+├── tidy_mcp/
 │   ├── __init__.py      # Package metadata and exports
-│   ├── __main__.py      # Module entry point (python -m notes_mcp)
+│   ├── __main__.py      # Module entry point (python -m tidy_mcp)
 │   └── server.py        # MCP server implementation
 tst/
-└── notes_mcp/
+└── tidy_mcp/
     └── test_server.py   # Test suite
 ```
 
@@ -85,9 +85,9 @@ make help            # Show all available commands
 
 The MCP server can be run in several ways:
 
-1. **Direct Python script**: `python src/notes_mcp/server.py`
-2. **CLI tool**: `notes-mcp`
-3. **Python module**: `python -m notes_mcp`
+1. **Direct Python script**: `python src/tidy_mcp/server.py`
+2. **CLI tool**: `tidy-mcp`
+3. **Python module**: `python -m tidy_mcp`
 4. **Makefile commands**: `make run`, `make run-cli`, `make run-module`
 
 ## Coding Style & Naming Conventions
@@ -142,7 +142,7 @@ make check
 ## Development Workflow
 
 1. **Setup**: `make setup-env`
-2. **Development**: Make changes in `src/notes_mcp/`
+2. **Development**: Make changes in `src/tidy_mcp/`
 3. **Quality**: `make check` (format, lint, test)
 4. **Testing**: `make test` or `make test-verbose`
 5. **Building**: `make build` to verify package builds correctly

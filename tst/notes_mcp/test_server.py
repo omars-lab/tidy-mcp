@@ -8,8 +8,8 @@ import sys
 from pathlib import Path
 import json
 
-# Add the notes_mcp directory to Python path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src" / "notes_mcp"))
+# Add the tidy_mcp directory to Python path
+sys.path.insert(0, str(Path(__file__).parent.parent / "src" / "tidy_mcp"))
 
 from fastmcp import Client
 from server import mcp

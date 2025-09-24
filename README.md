@@ -30,7 +30,7 @@ make install-dev
 pip install -e .
 
 # Production installation
-pip install notes-mcp
+pip install tidy-mcp
 ```
 
 ## Usage
@@ -46,13 +46,13 @@ make run
 make run-module
 
 # Or run directly
-python -m notes_mcp
+python -m tidy_mcp
 ```
 
 ### As a Python Package
 
 ```python
-from notes_mcp import mcp, NoteTemplate
+from tidy_mcp import mcp, NoteTemplate
 
 # Access the MCP server
 server = mcp
@@ -66,7 +66,7 @@ templates = await get_note_templates()
 After installation, you can run the MCP server directly:
 
 ```bash
-notes-mcp
+tidy-mcp
 ```
 
 ### As a Python Module
@@ -74,7 +74,7 @@ notes-mcp
 You can also run the MCP server as a Python module:
 
 ```bash
-python -m notes_mcp
+python -m tidy_mcp
 ```
 
 ### Using the Makefile
@@ -144,11 +144,11 @@ make help            # Show all available commands
 
 ```
 src/
-├── notes_mcp/
+├── tidy_mcp/
 │   ├── __init__.py      # Package metadata
 │   └── server.py        # MCP server implementation
 tst/
-└── notes_mcp/
+└── tidy_mcp/
     └── test_server.py   # Test suite
 ```
 

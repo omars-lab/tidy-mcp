@@ -6,7 +6,7 @@ include Makefile-mcp
 
 recursive-include src *.py
 recursive-include tst *.py
-include src/notes_mcp/__main__.py
+include src/tidy_mcp/__main__.py
 
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
