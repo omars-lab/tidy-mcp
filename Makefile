@@ -1,3 +1,46 @@
+# AGENTS: Guidelines for maintaining this Makefile
+# ================================================
+# 
+# When adding new targets:
+# 1. Follow the pattern: target-name: ## Description of what the target does
+# 2. Use .PHONY declarations for all targets that don't create files
+# 3. Keep targets focused on single responsibilities
+# 4. Use composable targets (e.g., target1 target2) for complex workflows
+# 5. Always include a description after ## for the help target
+# 6. Test new targets with 'make help' to ensure they appear correctly
+# 7. ALWAYS run 'make help' after making any changes to verify the Makefile works
+#
+# CRITICAL: Indentation Rules
+# - Commands under targets MUST be indented with TABS, not spaces
+# - Use 'make -n <target>' to test syntax before running
+# - If targets don't work, check indentation with: sed -n 'X,Yp' Makefile | cat -e
+# - Replace spaces with tabs: sed -i '' 's/^    /\t/' Makefile
+#
+# Target naming conventions:
+# - Use kebab-case for target names
+# - Prefix with action: commit-, push-, update-, etc.
+# - Use descriptive names that indicate the target's purpose
+#
+# Submodule considerations:
+# - Always use 'git add .' to stage submodule reference changes
+# - Submodule updates require committing the reference change in parent repo
+# - Use 'git submodule update --remote <submodule>' to update submodules
+#
+# Example of good target structure:
+# target-name: dependency1 dependency2 ## Clear description of what this does
+# 	@echo "Starting action..."
+# 	command1
+# 	command2
+# 	@echo "Action completed successfully!"
+
+# All targets that don't create files should be declared as .PHONY
+.PHONY: help prompt generate-weekly-report configure-context tst extract-key-points check-resume setup-knowledge update-prompts enable-submodule-status enable-recursive-push fix-submodule-detached-head commit-submodule-updates push-with-submodules commit push commit-push
+
+# Standard Makefile Variables (include these in all Makefiles)
+SHELL := /bin/bash
+MAKEFILE_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+
+# Project-specific variables
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 GIT_IGNORE_CONTEXT=${ROOT_DIR}/context/.gitignore
 
@@ -55,6 +98,19 @@ help:
 	@echo "  extract-key-points  - Extract key points using gemini"
 	@echo "  check-resume        - Check resume using gemini"
 	@echo "  setup-knowledge     - Set up knowledge base links"
+	@echo ""
+	@echo "📁 Submodule Management:"
+	@echo "  update-prompts      - Pull latest changes from the prompts submodule"
+	@echo "  enable-submodule-status - Enable submodule status in git status output"
+	@echo "  enable-recursive-push - Enable recursive submodule pushes"
+	@echo "  fix-submodule-detached-head - Fix detached HEAD in prompts submodule"
+	@echo "  commit-submodule-updates - Commit submodule reference changes"
+	@echo "  push-with-submodules - Push commits and submodules recursively"
+	@echo ""
+	@echo "🔧 Git Operations:"
+	@echo "  commit              - Stage and commit changes (interactive message)"
+	@echo "  push                - Push committed changes to remote"
+	@echo "  commit-push         - Commit and push changes (interactive message)"
 
 prompt:
 	echo what tools do you have access to | gemini --prompt
@@ -92,3 +148,73 @@ setup-knowledge:
 	mkdir -p knowledge
 	test -L knowledge/promo-doc.md || \
 		(ln -s "/Users/omareid/Library/Containers/co.noteplan.NotePlan3/Data/Library/Application Support/co.noteplan.NotePlan3/Notes/🎩 Role/2023 Promo.txt" knowledge/promo-doc.md)
+
+# =============================================================================
+# Submodule Support Targets
+# =============================================================================
+
+update-prompts: ## Pull latest changes from the prompts submodule
+	@echo "Updating prompts submodule..."
+	git submodule update --remote prompts
+	@echo "Prompts submodule updated successfully!"
+
+enable-submodule-status: ## Enable submodule status in git status output
+	@if [ "$$(git config --get status.submodulesummary)" != "1" ]; then \
+		echo "Enabling submodule status in git status..."; \
+		git config status.submodulesummary 1; \
+		echo "Submodule status enabled! Run 'git status' to see submodule details."; \
+	else \
+		echo "Submodule status is already enabled."; \
+	fi
+
+enable-recursive-push: ## Enable recursive submodule pushes
+	@if [ "$$(git config --get push.recurseSubmodules)" != "on-demand" ]; then \
+		echo "Enabling recursive submodule pushes..."; \
+		git config --global push.recurseSubmodules on-demand; \
+		echo "Recursive submodule pushes enabled!"; \
+	else \
+		echo "Recursive submodule pushes are already enabled."; \
+	fi
+
+fix-submodule-detached-head: ## Fix detached HEAD in prompts submodule
+	@echo "Fixing detached HEAD in prompts submodule..."
+	cd prompts && git checkout -b main origin/main 2>/dev/null || git checkout main
+	@echo "Submodule HEAD fixed!"
+
+commit-submodule-updates: ## Commit submodule reference changes
+	@echo "Committing submodule reference changes..."
+	git add prompts
+	@if [ -n "$$(git status --porcelain)" ]; then \
+		git commit -m "Update prompts submodule"; \
+		echo "Submodule updates committed successfully!"; \
+	else \
+		echo "No submodule changes to commit."; \
+	fi
+
+push-with-submodules: ## Push commits and submodules recursively
+	@echo "Pushing commits and submodules..."
+	git push --recurse-submodules=on-demand
+	@echo "Push completed successfully!"
+
+# =============================================================================
+# Basic Git Operations
+# =============================================================================
+
+commit: ## Stage and commit changes (interactive message)
+	@echo "Staging all changes..."
+	git add .
+	@if [ -n "$$(git status --porcelain)" ]; then \
+		echo "Enter commit message:"; \
+		read -r commit_msg; \
+		git commit -m "$$commit_msg"; \
+		echo "Changes committed successfully!"; \
+	else \
+		echo "No changes to commit."; \
+	fi
+
+push: ## Push committed changes to remote
+	@echo "Pushing to remote..."
+	git push
+	@echo "Changes pushed successfully!"
+
+commit-push: commit push ## Commit and push changes (interactive message)
