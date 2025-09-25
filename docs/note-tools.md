@@ -33,10 +33,6 @@
 #     return templates
 
 
-# @mcp.tool("analyze_note")
-# async def analyze_note(request: NoteAnalysisRequest) -> NoteAnalysisResponse:
-#     """Analyze note content and extract insights."""
-#     content = request.content.lower()
 
 
 # # Example Tool: Note Analysis
@@ -67,6 +63,11 @@
 #     """Response model for note generation."""
 #     content: str = Field(description="Generated note content")
 #     template_used: str = Field(description="Template that was used")
+
+# @mcp.tool("analyze_note")
+# async def analyze_note(request: NoteAnalysisRequest) -> NoteAnalysisResponse:
+#     """Analyze note content and extract insights."""
+#     content = request.content.lower()
 
 # @mcp.prompt("generate_note")
 # async def generate_note(request: NoteGenerationRequest) -> NoteGenerationResponse:

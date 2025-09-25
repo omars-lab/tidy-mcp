@@ -39,7 +39,19 @@ help:
 	@echo ""
 	@echo "🔗 Integration:"
 	@echo "  configure-gemini - Configure Gemini slash commands"
-	@echo "  simulate-mcp     - Simulate MCP note-taking workflow"
+	@echo "  simulate-gemini-mcp     - Simulate MCP note-taking workflow"
+	@echo ""
+	@echo "📦 NPM Package Management:"
+	@echo "  update-npm    - Update npm packages to latest versions"
+	@echo "  update-npm-global - Update global npm packages"
+	@echo "  check-npm-outdated - Check for outdated npm packages"
+	@echo "  update-npm-all - Update both local and global npm packages"
+	@echo "  update-gemini-cli - Update Gemini CLI to latest version"
+	@echo "  update-claude-cli - Update Claude CLI to latest version"
+	@echo "  update-ai-clis - Update both Gemini and Claude CLIs"
+	@echo ""
+	@echo "🧪 Testing:"
+	@echo "  test-plantuml - Test PlantUML functionality"
 	@echo ""
 	@echo "📚 Documentation:"
 	@echo "  docs         - Generate documentation"
@@ -208,8 +220,9 @@ deps:
 # Integration
 # =============================================================================
 
+.PHONY: configure-gemini simulate-gemini-mcp
+
 # Configure Gemini slash commands
-.PHONY: configure-gemini
 configure-gemini:
 	@echo "🔗 Configuring Gemini slash commands..."
 	mkdir -p ${ROOT_DIR}/.gemini/
@@ -217,11 +230,39 @@ configure-gemini:
 	@echo "✅ Gemini slash commands configured!"
 
 # Simulate MCP note-taking workflow
-.PHONY: simulate-mcp
-simulate-mcp:
+simulate-gemini-mcp:
 	@echo "🎭 Simulating MCP note-taking workflow..."
-	jq '"cd \(.mcpServers.note_taking.cwd); \(.mcpServers.note_taking.command) \(.mcpServers.note_taking.args | join($$ARGS.positional[0]))"' \
-		-r .gemini/settings.json --args " " | sh
+	jq '"cd \(.mcpServers.tidy_mcp.cwd); \(.mcpServers.tidy_mcp.command) \(.mcpServers.tidy_mcp.args | join($$ARGS.positional[0]))"' \
+		-r .gemini/settings.json --args " "
+
+# Configure Claude MCP
+# https://claudelog.com/configuration/#mcp-configuration
+configure-claude:
+	@echo "🔗 Configuring Claude MCP ..."
+	mkdir -p ${ROOT_DIR}/.claude/
+	jq -n '{}' \
+		| jq --arg pwd "${ROOT_DIR}" --arg cmd $(shell conda run -n ${CONDA_ENV} which python | grep python) \
+			'.projects["\($$pwd)"].mcpServers.tidy_mcp.command = "\($$cmd)"' \
+		| jq --arg pwd "${ROOT_DIR}" \
+			'.projects["\($$pwd)"].mcpServers.tidy_mcp.args = ["-m", "tidy_mcp"]' \
+	> ${ROOT_DIR}/.claude/settings.local.json
+	@# For claude code
+	@# claude mcp add -s project -t stdio tidy_mcp "$(shell conda run -n ${CONDA_ENV} which python | grep python)" "-m" "tidy_mcp"
+	jq -n '{}' \
+		| jq --arg pwd "${ROOT_DIR}" --arg cmd $(shell conda run -n ${CONDA_ENV} which python | grep python) \
+			 '.mcpServers.tidy_mcp.command = "\($$cmd)"' \
+		| jq '.mcpServers.tidy_mcp.args = ["-m", "tidy_mcp"]' \
+		| jq '.mcpServers.tidy_mcp.type = "stdio"' \
+		| jq '.mcpServers.tidy_mcp.env = {}' \
+	> ${ROOT_DIR}/.mcp.json
+	@echo "✅ Claude mcp commands configured!"
+
+# Simulate Claude MCP 
+simulate-claude-mcp:
+	@echo "🎭 Simulating Claude MCP note-taking workflow..."
+	cat .claude/settings.local.json \
+		| jq --arg pwd "${ROOT_DIR}" \
+		'[.projects["\($$pwd)"].mcpServers.tidy_mcp.command] + .projects["\($$pwd)"].mcpServers.tidy_mcp.args | join(" ")'
 
 # =============================================================================
 # Documentation
@@ -239,3 +280,36 @@ readme:
 	@echo "📝 Updating README with current package information..."
 	@echo "Package version: $(shell conda run -n ${CONDA_ENV} python -c "import tidy_mcp; print(tidy_mcp.__version__)" 2>/dev/null || echo "unknown")"
 	@echo "README.md is up to date"
+
+# =============================================================================
+# NPM Package Management
+# =============================================================================
+
+# Update Gemini CLI
+.PHONY: update-gemini-cli
+update-gemini-cli: ## Update Gemini CLI to latest version
+	@echo "🤖 Updating Gemini CLI..."
+	npm update -g @google/gemini-cli
+	@echo "✅ Gemini CLI updated!"
+# Update Claude CLI (if using Anthropic's CLI)
+.PHONY: update-claude-cli
+update-claude-cli: ## Update Claude CLI to latest version
+	@echo "🤖 Updating Claude CLI..."
+	@if command -v claude >/dev/null 2>&1; then \
+		npm update -g @anthropic-ai/claude-code; \
+		echo "✅ Claude CLI updated!"; \
+	else \
+		echo "❌ Claude CLI not found. Install with: npm install -g @anthropic-ai/claude-code"; \
+	fi
+
+# Update both Gemini and Claude CLIs
+.PHONY: update-ai-clis
+update-ai-clis: update-gemini-cli update-claude-cli ## Update both Gemini and Claude CLIs
+	@echo "✅ All AI CLIs updated!"
+
+# Test PlantUML functionality
+.PHONY: test-plantuml
+test-plantuml: ## Test PlantUML functionality
+	@echo "🌱 Testing PlantUML functionality..."
+	conda run -n ${CONDA_ENV} python src/tidy_mcp/plantuml.py
+	@echo "✅ PlantUML test completed!"

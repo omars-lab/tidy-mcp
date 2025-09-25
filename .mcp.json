@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "tidy_mcp": {
+      "command": "/usr/local/bin/miniconda3/envs/tidy-mcp/bin/python",
+      "args": [
+        "-m",
+        "tidy_mcp"
+      ],
+      "type": "stdio",
+      "env": {}
+    }
+  }
+}

@@ -4,24 +4,22 @@ MCP Server for keeping things tidy!
 Provides resources, tools, and prompts for my personal workflow management.
 """
 
-import asyncio
-import json
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 from pathlib import Path
-
 from fastmcp import FastMCP
-from pydantic import BaseModel, Field
+from .plantuml import tool_generate_plantuml_image_url, tool_download_plantuml_image, prompt_iterate_on_plantuml_diagram
 
-
-# Initialize FastMCP server
-mcp = FastMCP("oeid-tidy-mcp")
-
-def main():
+def main(mcp: FastMCP):
+    mcp.tool("generate_plantuml_image_url")(tool_generate_plantuml_image_url)
+    mcp.tool("download_plantuml_image")(tool_download_plantuml_image)
+    mcp.prompt("iterate_on_plantuml_diagram")(prompt_iterate_on_plantuml_diagram)
     """Main entry point for the MCP server."""
     mcp.run()
 
+# Initialize FastMCP server
+mcp = FastMCP("tidy-mcp")
 
 if __name__ == "__main__":
     # Run the server
-    main()
+    main(mcp)

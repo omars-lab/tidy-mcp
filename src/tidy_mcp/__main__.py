@@ -8,7 +8,7 @@ Usage:
 """
 
 import sys
-from .server import main
+from .server import mcp, main
 
 if __name__ == "__main__":
-    main()
+    main(mcp)

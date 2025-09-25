@@ -1,12 +1,21 @@
 {
-  "theme": "GitHub",
-  "selectedAuthType": "oauth-personal",
   "mcpServers": {
-      "note_taking": {
-        "command": "/usr/local/bin/miniconda3/envs/mcp/bin/python",
-        "args": ["/Users/omareid/Workspace/git/tidy-mcp/src/tidy_mcp/server.py", "2"],
-        "cwd": "/Users/omareid/Workspace/git/tidy-mcp/",
-      	"trust": true
-      }
+    "tidy_mcp": {
+      "command": "/usr/local/bin/miniconda3/envs/tidy-mcp/bin/python",
+      "args": [
+        "-m",
+        "tidy_mcp"
+      ],
+      "cwd": "/Users/omareid/Workspace/git/tidy-mcp/",
+      "trust": true
+    }
+  },
+  "security": {
+    "auth": {
+      "selectedType": "oauth-personal"
+    }
+  },
+  "ui": {
+    "theme": "GitHub"
   }
 }
