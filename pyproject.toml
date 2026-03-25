@@ -7,14 +7,14 @@ name = "tidy-mcp"
 version = "0.1.0"
 description = "MCP Server for keeping things tidy!"
 readme = "README.md"
-license = {text = "MIT"}
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [
     {name = "Omar Eid", email = "omar@bytesofpurpose.com"}
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.12",
     "Topic :: Software Development :: Libraries :: Python Modules",
@@ -23,6 +23,9 @@ requires-python = ">=3.12"
 dependencies = [
     "fastmcp>=0.1.0",
     "pydantic>=2.0.0",
+    "requests>=2.31.0",
+    "fastapi>=0.108.0",
+    "uvicorn[standard]>=0.24.0",
     "arrow",
     "Jinja2<4.0.0,>=2.7"
 ]
